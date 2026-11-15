@@ -600,7 +600,9 @@ async function validateRewardConfiguration(
   if (rarities.rows.length !== rarityIds.length) {
     throw new AppError('Uma raridade da conversão não existe ou foi removida.', 404);
   }
-  const rarityById = new Map(rarities.rows.map((rarity) => [rarity.id, rarity]));
+  const rarityById = new Map(
+    rarities.rows.map((rarity): [string, typeof rarity] => [rarity.id, rarity])
+  );
   const cards = cardIds.length ? await client.query<{ id: string; rarity_id: string }>(
     'SELECT id, rarity_id FROM cards WHERE id = ANY($1::uuid[]) AND deleted_at IS NULL',
     [cardIds]
@@ -608,7 +610,9 @@ async function validateRewardConfiguration(
   if (cards.rows.length !== cardIds.length) {
     throw new AppError('Uma carta da sobrescrita não existe ou foi removida.', 404);
   }
-  const cardById = new Map(cards.rows.map((card) => [card.id, card]));
+  const cardById = new Map(
+    cards.rows.map((card): [string, typeof card] => [card.id, card])
+  );
 
   for (const reward of [...defaults, ...overrides]) {
     const rarity = rarityById.get(reward.rarityId)!;

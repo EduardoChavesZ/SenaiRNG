@@ -19,6 +19,7 @@ As migrations existentes são incrementais:
 | `009_profile_nickname_color.sql` | Cor personalizada do apelido |
 | `010_remove_stock.sql` | Remove limites de estoque e arquiva movimentações históricas |
 | `011_card_banner_media.sql` | Metadados das imagens de cartas e mídia visual dos banners |
+| `012_supabase_security.sql` | Habilita RLS nas tabelas públicas e fixa o `search_path` da função de perfil |
 
 Uma migration aplicada é histórica e não deve ser editada. Mudanças de esquema devem ser feitas numa nova migration. O runner registra nomes, não checksums, e não fornece rollback automático; revise o SQL e faça backup antes de aplicá-lo a um banco persistente.
 
@@ -42,7 +43,13 @@ O diagrama de relacionamentos está em [database-er.mmd](./database-er.mmd). Ele
 
 ## Execução e segurança operacional
 
-Na raiz do projeto, configure `DATABASE_URL` em `.env` para o banco pretendido e confirme o host e nome antes de executar:
+Na raiz do projeto, configure `DATABASE_URL` em `server/.env` para o banco pretendido e confirme o host e nome antes de executar. Para conectar ao Supabase, use a URI PostgreSQL do projeto com `sslmode=require` e mantenha a senha somente em `server/.env`:
+
+```text
+postgresql://postgres:SENHA_DO_BANCO@db.mpupgrslawbcepleoflc.supabase.co:5432/postgres?sslmode=require
+```
+
+O backend usa `pg` diretamente; não coloque a senha do banco nem uma chave Supabase no frontend. As migrations `001` a `012` já foram aplicadas ao projeto Supabase e registradas em `schema_migrations`. O RLS está habilitado nas tabelas do schema `public`; a aplicação deve acessá-las somente pelo backend com a conexão PostgreSQL privada.
 
 ```powershell
 npm run db:migrate --workspace server

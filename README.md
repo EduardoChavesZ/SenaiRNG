@@ -56,7 +56,7 @@ O arquivo `api/[...path].ts` expõe as rotas `/api/*` como uma função da Verce
 
 Defina nas variáveis de ambiente de produção da Vercel:
 
-- `DATABASE_URL`: URL PostgreSQL do Supabase, com SSL.
+- `DATABASE_URL`: URL PostgreSQL do Supabase, com SSL. Se a integração Supabase da Vercel fornecer `POSTGRES_URL`, ela será usada quando `DATABASE_URL` não estiver definida.
 - `APP_ORIGIN`: origem exata do frontend publicado, por exemplo `https://seu-projeto.vercel.app`.
 - `COOKIE_SECURE=true`: necessário para os cookies de sessão em HTTPS.
 - `ADMIN_EMAIL` e `ADMIN_PASSWORD`: opcionais; defina ambos se quiser criar o administrador inicial.

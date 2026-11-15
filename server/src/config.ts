@@ -18,5 +18,8 @@ const configSchema = z.object({
   BANNER_GIF_MAX_DURATION_MS: z.coerce.number().int().positive().default(15_000)
 });
 
-export const config = configSchema.parse(process.env);
+export const config = configSchema.parse({
+  ...process.env,
+  DATABASE_URL: process.env.DATABASE_URL ?? process.env.POSTGRES_URL
+});
 export const cookieSecure = config.COOKIE_SECURE === 'true';

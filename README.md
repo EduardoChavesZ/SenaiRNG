@@ -52,7 +52,7 @@ Para produção, use `COOKIE_SECURE=true`, configure `APP_ORIGIN` para a origem 
 
 ## Publicar na Vercel
 
-O arquivo `api/[...path].ts` expõe as rotas `/api/*` como uma função da Vercel. O `api/package.json` marca essa função como ES module para que ela carregue corretamente o servidor; `vercel.json` configura o build do frontend. Configure o diretório raiz do projeto como raiz do projeto Vercel, com o comando de build `npm run build` e a saída `client/dist`.
+O arquivo `api/[...path].ts` expõe as rotas `/api/*` como uma função da Vercel. O `api/package.json` marca essa função como ES module para que ela carregue corretamente o servidor; `vercel.json` fixa o preset Vite, configura o build do frontend e a saída `client/dist`. No projeto Vercel, mantenha o diretório raiz do repositório como Root Directory.
 
 Defina nas variáveis de ambiente de produção da Vercel:
 

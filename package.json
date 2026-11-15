@@ -1,0 +1,15 @@
+{
+  "name": "senai-rng",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace server && npm run build --workspace client",
+    "test": "npm run test --workspace server"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

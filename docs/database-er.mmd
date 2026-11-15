@@ -1,0 +1,229 @@
+erDiagram
+  USERS ||--o{ USER_SESSIONS : authenticates
+  USERS ||--o| WALLETS : owns
+  USERS ||--o{ WALLET_TRANSACTIONS : records
+  USERS o|--o{ AUDIT_LOGS : acts
+  USERS o|--o{ LEGACY_STOCK_MOVEMENTS : adjusts
+  USERS ||--o| USER_PROFILE_CUSTOMIZATIONS : configures
+  USERS ||--o| USER_PREFERENCES : configures
+  USERS ||--o| USER_GAME_STATS : tracks
+
+  CATEGORIES o|--o{ CARDS : classifies
+  RARITIES ||--o{ CARDS : assigns
+  CARDS ||--o{ LEGACY_STOCK_MOVEMENTS : tracks
+
+  USERS ||--o{ DRAW_BATCHES : requests
+  DRAW_BATCHES ||--o{ DRAWS : contains
+  USERS ||--o{ DRAWS : receives
+  CARDS ||--o{ DRAWS : snapshots
+  RARITIES ||--o{ DRAWS : snapshots
+  USERS ||--o{ USER_CARDS : collects
+  CARDS ||--o{ USER_CARDS : collected
+
+  USERS ||--o{ USER_ACHIEVEMENTS : unlocks
+  ACHIEVEMENTS ||--o{ USER_ACHIEVEMENTS : awarded
+  USERS ||--o{ USER_COSMETIC_ITEMS : owns
+  COSMETIC_ITEMS ||--o{ USER_COSMETIC_ITEMS : acquired
+  COSMETIC_ITEMS o|--o{ USER_PROFILE_CUSTOMIZATIONS : equipped
+  CARDS o|--o{ USER_PROFILE_CUSTOMIZATIONS : featured
+
+  USERS ||--o| DAILY_STREAKS : tracks
+  USERS ||--o{ DAILY_REWARD_HISTORY : claims
+  DAILY_REWARDS o|--o{ DAILY_REWARD_HISTORY : grants
+  WALLET_TRANSACTIONS ||--o{ DAILY_REWARD_HISTORY : credits
+  WALLET_TRANSACTIONS o|--o{ DAILY_REWARD_HISTORY : streak_bonus
+
+  USERS ||--o{ INVOCATION_BANNERS : creates
+  INVOCATION_BANNERS ||--o{ INVOCATION_BANNER_CARDS : configures
+  CARDS ||--o{ INVOCATION_BANNER_CARDS : included
+  INVOCATION_BANNERS ||--o| INVOCATION_PITY_CONFIGS : guarantees
+  RARITIES ||--o{ INVOCATION_PITY_CONFIGS : guaranteed_rarity
+  USERS ||--o{ USER_BANNER_PITY : tracks
+  INVOCATION_BANNERS ||--o{ USER_BANNER_PITY : tracks
+  RARITIES ||--o{ DUPLICATE_REWARD_CONFIGS : converts
+  CARDS o|--o{ DUPLICATE_REWARD_CONFIGS : overrides
+  USERS ||--o{ DUPLICATE_REWARD_CONFIGS : administers
+
+  USERS {
+    uuid id PK
+    text email
+    text role
+    timestamptz deleted_at
+  }
+  USER_SESSIONS {
+    uuid id PK
+    uuid user_id FK
+    text token_hash
+    timestamptz expires_at
+  }
+  WALLETS {
+    uuid user_id PK, FK
+    bigint balance
+    bigint gems_balance
+    bigint xp_balance
+  }
+  WALLET_TRANSACTIONS {
+    uuid id PK
+    uuid user_id FK
+    text type
+    text currency
+    bigint amount
+  }
+  SETTINGS {
+    text key PK
+    jsonb value
+  }
+  AUDIT_LOGS {
+    uuid id PK
+    uuid actor_user_id FK
+    text entity_type
+    jsonb before_data
+    jsonb after_data
+  }
+  CATEGORIES {
+    uuid id PK
+    text name
+    boolean active
+  }
+  RARITIES {
+    uuid id PK
+    text name
+    bigint weight
+    boolean active
+  }
+  CARDS {
+    uuid id PK
+    uuid category_id FK
+    uuid rarity_id FK
+    text image_path
+    text image_mime_type
+    integer image_width
+    integer image_height
+    boolean active
+  }
+  LEGACY_STOCK_MOVEMENTS {
+    uuid id PK
+    uuid card_id FK
+    text type
+    integer change_amount
+    timestamptz created_at
+  }
+  DRAW_BATCHES {
+    uuid id PK
+    uuid user_id FK
+    text idempotency_key
+    smallint quantity
+    text status
+  }
+  DRAWS {
+    uuid id PK
+    uuid batch_id FK
+    uuid user_id FK
+    uuid card_id FK
+    uuid rarity_id FK
+    smallint position
+  }
+  USER_CARDS {
+    uuid user_id PK, FK
+    uuid card_id PK, FK
+    integer quantity
+  }
+  ACHIEVEMENTS {
+    uuid id PK
+    text key
+    text requirement_type
+  }
+  USER_ACHIEVEMENTS {
+    uuid user_id PK, FK
+    uuid achievement_id PK, FK
+    timestamptz unlocked_at
+  }
+  COSMETIC_ITEMS {
+    uuid id PK
+    text slug
+    text kind
+    bigint price_amount
+  }
+  USER_COSMETIC_ITEMS {
+    uuid user_id PK, FK
+    uuid item_id PK, FK
+    uuid idempotency_key
+  }
+  USER_PROFILE_CUSTOMIZATIONS {
+    uuid user_id PK, FK
+    text nickname
+    text theme
+    uuid featured_card_id FK
+  }
+  USER_PREFERENCES {
+    uuid user_id PK, FK
+    boolean reduce_effects
+    boolean invocation_music_enabled
+    real sound_volume
+  }
+  DAILY_REWARDS {
+    uuid id PK
+    text currency
+    bigint amount
+    bigint weight
+  }
+  DAILY_STREAK_MILESTONES {
+    integer consecutive_days PK
+    text currency
+    bigint amount
+  }
+  DAILY_STREAKS {
+    uuid user_id PK, FK
+    integer current_streak
+    timestamptz last_claim_at
+    timestamptz last_streak_at
+  }
+  DAILY_REWARD_HISTORY {
+    uuid id PK
+    uuid user_id FK
+    uuid reward_id FK
+    uuid transaction_id FK
+    uuid idempotency_key
+  }
+  USER_GAME_STATS {
+    uuid user_id PK, FK
+    bigint total_draws
+    integer unique_cards
+  }
+  INVOCATION_BANNERS {
+    uuid id PK
+    text slug
+    text currency
+    bigint unit_cost
+    text image_path
+    text image_mime_type
+    integer image_width
+    integer image_height
+    text fallback_image_path
+    smallint image_focal_x
+    smallint image_focal_y
+    integer version
+  }
+  INVOCATION_BANNER_CARDS {
+    uuid banner_id PK, FK
+    uuid card_id PK, FK
+    bigint weight
+  }
+  INVOCATION_PITY_CONFIGS {
+    uuid banner_id PK, FK
+    uuid rarity_id FK
+    smallint hard_pity_limit
+  }
+  USER_BANNER_PITY {
+    uuid user_id PK, FK
+    uuid banner_id PK, FK
+    integer failures_count
+  }
+  DUPLICATE_REWARD_CONFIGS {
+    uuid id PK
+    uuid rarity_id FK
+    uuid card_id FK
+    bigint gold_amount
+    bigint gems_amount
+    bigint xp_amount
+  }

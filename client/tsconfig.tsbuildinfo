@@ -1,0 +1,1 @@
+{"root":["./src/api.ts","./src/currency.ts","./src/main.tsx","./src/odds.ts","./src/ui/admindashboard.tsx","./src/ui/app.tsx","./src/ui/authscreen.tsx","./src/ui/bannerartwork.tsx","./src/ui/cardartwork.tsx","./src/ui/gamedashboard.tsx","./src/ui/invocationadmin.tsx","./src/ui/invocationpage.tsx","./src/ui/prizewheel.tsx","./src/ui/profilepage.tsx"],"version":"5.9.3"}
